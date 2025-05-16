@@ -19,6 +19,7 @@ def init_db():
             CREATE TABLE IF NOT EXISTS contacts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
+                phone TEXT NOT NULL,
                 email TEXT NOT NULL
             );
         ''')
@@ -37,10 +38,10 @@ def index():
             message = 'Contact deleted successfully.'
         else:
             name = request.form.get('name')
-            email = request.form.get('email')
-            if name and email:
+            phone = request.form.get('phone')
+            if name and phone:
                 db = get_db()
-                db.execute('INSERT INTO contacts (name, email) VALUES (?, ?)', (name, email))
+                db.execute('INSERT INTO contacts (name, phone) VALUES (?, ?)', (name, phone))
                 db.commit()
                 message = 'Contact added successfully.'
             else:
@@ -62,8 +63,8 @@ def index():
             <form method="POST" action="/">
                 <label for="name">Name:</label><br>
                 <input type="text" id="name" name="name" required><br>
-                <label for="email">Email:</label><br>
-                <input type="text" id="email" name="email" required><br><br>
+                <label for="phone">Phone:</label><br>
+                <input type="text" id="phone" name="phone" required><br><br>
                 <input type="submit" value="Submit">
             </form>
             <p>{{ message }}</p>
@@ -71,13 +72,13 @@ def index():
                 <table border="1">
                     <tr>
                         <th>Name</th>
-                        <th>Email</th>
+                        <th>Phone</th>
                         <th>Delete</th>
                     </tr>
                     {% for contact in contacts %}
                         <tr>
                             <td>{{ contact['name'] }}</td>
-                            <td>{{ contact['email'] }}</td>
+                            <td>{{ contact['phone'] }}</td>
                             <td>
                                 <form method="POST" action="/">
                                     <input type="hidden" name="contact_id" value="{{ contact['id'] }}">
