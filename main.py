@@ -16,7 +16,7 @@ def init_db():
     with app.app_context():
         db = get_db()
         db.execute('''
-            CREATE TABLE IF NOT EXISTS contact (
+            CREATE TABLE IF NOT EXISTS contacts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 phone TEXT NOT NULL
@@ -35,7 +35,7 @@ def index():
         if request.form.get('action') == 'delete':
             contact_id = request.form.get('contact_id')
             db = get_db()
-            db.execute('DELETE FROM contact WHERE id = ?', (contact_id,))
+            db.execute('DELETE FROM contacts WHERE id = ?', (contact_id,))
             db.commit()
             message = 'Contact deleted successfully.'
         else:
@@ -43,7 +43,7 @@ def index():
             phone = request.form.get('phone')
             if name and phone:
                 db = get_db()
-                db.execute('INSERT INTO contact (name, phone) VALUES (?, ?)', (name, phone))
+                db.execute('INSERT INTO contacts (name, phone) VALUES (?, ?)', (name, phone))
                 db.commit()
                 message = 'Contact added successfully.'
             else:
@@ -51,17 +51,17 @@ def index():
 
     # Always display the contacts table
     db = get_db()
-    contact = db.execute('SELECT * FROM contact').fetchall()
+    contacts = db.execute('SELECT * FROM contacts').fetchall()
 
-    # Display the HTML form along with the contact table
+    # Display the HTML form along with the contacts table
     return render_template_string('''
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Contact</title>
+            <title>Contacts</title>
         </head>
         <body>
-            <h2>Add Contact</h2>
+            <h2>Add Contacts</h2>
             <form method="POST" action="/">
                 <label for="name">Name:</label><br>
                 <input type="text" id="name" name="name" required><br>
@@ -70,14 +70,14 @@ def index():
                 <input type="submit" value="Submit">
             </form>
             <p>{{ message }}</p>
-            {% if contact %}
+            {% if contacts %}
                 <table border="1">
                     <tr>
                         <th>Name</th>
                         <th>Phone</th>
                         <th>Delete</th>
                     </tr>
-                    {% for contact in contact %}
+                    {% for contact in contacts %}
                         <tr>
                             <td>{{ contact['name'] }}</td>
                             <td>{{ contact['phone'] }}</td>
@@ -96,7 +96,7 @@ def index():
             {% endif %}
         </body>
         </html>
-    ''', message=message, contact=contact)
+    ''', message=message, contacts=contacts)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
