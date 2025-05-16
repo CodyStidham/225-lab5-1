@@ -23,10 +23,7 @@ def init_db():
                 
             );
         ''')
-            try:
-            db.execute('ALTER TABLE contacts ADD COLUMN email TEXT;')
-        except sqlite3.OperationalError:
-            pass
+           
 
         db.commit()
 
